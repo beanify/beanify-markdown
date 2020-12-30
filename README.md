@@ -41,51 +41,7 @@ beanify
   })
 ```
 
-with `beanify-ajv`.register `beanify-ajv` before registering `beanify-markdown`
-
-```javascript
-const Beanify = require('beanify')
-const beanifyAjv = require('beanify-ajv')
-const Plugin = require('beanify-markdown')
-const beanify = Beanify({})
-
-beanify
-  .register(Plugin, {
-    dir: 'ajv-out'
-  })
-  .register(beanifyAjv, {
-    ajv: {
-      useDefaults: true
-    }
-  }) // Need to register after beanify-markdown
-  .route({
-    url: 'math.asin',
-    md: {
-      name: 'asin',
-      desc: 'function returns the arcsine (in radians) of a number'
-    },
-    schema: {
-      body: {
-        type: 'number'
-      },
-      attribute: {
-        type: 'object',
-        properties: {
-          token: {
-            type: 'string'
-          }
-        }
-      }
-    },
-    handler (req, rep) {}
-  })
-  .ready(e => {
-    e && beanify.$log.error(e.message)
-    beanify.print()
-  })
-```
-
-with `beanify-url`.register `beanify-url` before registering `beanify-markdown`
+with `beanify-url`.
 
 ```javascript
 const Beanify = require('beanify')
@@ -96,7 +52,7 @@ const beanify = Beanify({})
 
 beanify
   .register(Plugin, {
-    dir: 'url-out'
+    dir: '.out-url'
   })
   .register(beanifyAjv, {
     ajv: {
@@ -104,7 +60,7 @@ beanify
       coerceTypes: true
     }
   })
-  .register(beanifyUrl) // Need to register after beanify-markdown
+  .register(beanifyUrl)
   .route({
     url: 'math.:action',
     md: {

@@ -6,7 +6,7 @@ const beanify = Beanify({})
 
 beanify
   .register(Plugin, {
-    dir: 'url-out'
+    dir: '.out-url'
   })
   .register(beanifyAjv, {
     ajv: {

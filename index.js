@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const kPluginUrl = Symbol.for('beanify.plugin.url')
 
 function isProd () {
   const env = process.env.NODE_ENV
@@ -18,6 +19,27 @@ function deleteDir (dir) {
     }
   }
   fs.rmdirSync(dir)
+}
+
+function preUrl (route) {
+  let { url } = route
+  if (route[kPluginUrl]) {
+    // beanify-url register first
+    const maps = route[kPluginUrl]
+    const segs = url.split('.')
+    url = segs
+      .map((v, i) => {
+        if (v === '*') {
+          const n = maps.find(m => {
+            return m.index === i
+          }).name
+          return `:${n}`
+        }
+        return v
+      })
+      .join('.')
+  }
+  return url
 }
 
 module.exports = async function (beanify, opts) {
@@ -44,7 +66,8 @@ module.exports = async function (beanify, opts) {
 
     const md = route.markdown || route.md || {}
 
-    const fName = route.url.replace(/.\*|.:/g, '.@')
+    const url = preUrl(route)
+    const fName = url.replace(/.\*|.:/g, '.@')
     const aPath = path.join(oDir, `${fName}.md`)
     const rPath = aPath.replace(oDir, '.')
 
@@ -57,7 +80,7 @@ module.exports = async function (beanify, opts) {
 
     // route options
     fs.appendFileSync(aPath, '## Options \r\n\r\n')
-    fs.appendFileSync(aPath, `- **URL**: ${route.url} \r\n`)
+    fs.appendFileSync(aPath, `- **URL**: ${url} \r\n`)
     fs.appendFileSync(aPath, `- **\\$pubsub**: ${route.$pubsub} \r\n`)
     fs.appendFileSync(aPath, `- **\\$timeout**: ${route.$timeout} \r\n\r\n`)
 

@@ -4,7 +4,7 @@ const beanify = Beanify({})
 
 beanify
   .register(Plugin, {
-    dir: 'out'
+    dir: '.out-normal'
   })
   .route({
     url: 'math.asin',
